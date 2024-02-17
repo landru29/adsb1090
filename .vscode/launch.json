@@ -5,15 +5,27 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Dump1090",
+            "name": "cgo",
             "type": "go",
             "request": "launch",
             "mode": "auto",
-            "program": "${workspaceFolder}/cmd/dump1090",
+            "program": "${workspaceFolder}/cmd/adsb1090",
             "cwd": "${workspaceFolder}",
             "args": [
-                "--screen", "basestation",
-                "--http", "0.0.0.0:8080",
+                "--fixture-file", "testdata/modes1.bin",
+            ],
+            "buildFlags": "-ldflags='-X github.com/landru29/adsb1090/internal/input/implementations.debug=false'"
+        },
+        {
+            "name": "ADSB1090",
+            "type": "go",
+            "request": "launch",
+            "mode": "auto",
+            "program": "${workspaceFolder}/cmd/adsb1090",
+            "cwd": "${workspaceFolder}",
+            "args": [
+                "--screen", "base-station",
+                "--fixture-file", "testdata/modes1.bin",
             ]
         },
         {
@@ -21,7 +33,7 @@
             "type": "go",
             "request": "launch",
             "mode": "auto",
-            "program": "${workspaceFolder}/cmd/dump1090",
+            "program": "${workspaceFolder}/cmd/adsb1090",
             "cwd": "${workspaceFolder}",
             "args": [
                 "serializers",
@@ -32,7 +44,7 @@
             "type": "go",
             "request": "launch",
             "mode": "auto",
-            "program": "${workspaceFolder}/cmd/dump1090",
+            "program": "${workspaceFolder}/cmd/adsb1090",
             "cwd": "${workspaceFolder}",
             "args": [
                 "--fixture-file", "internal/dump/testdata/modes1.bin",
@@ -45,7 +57,7 @@
             "type": "go",
             "request": "launch",
             "mode": "auto",
-            "program": "${workspaceFolder}/cmd/dump1090",
+            "program": "${workspaceFolder}/cmd/adsb1090",
             "cwd": "${workspaceFolder}",
             "args": [
                 "--fixture-file", "internal/dump/testdata/modes1.bin",
@@ -58,7 +70,7 @@
             "type": "go",
             "request": "launch",
             "mode": "auto",
-            "program": "${workspaceFolder}/cmd/dump1090",
+            "program": "${workspaceFolder}/cmd/adsb1090",
             "cwd": "${workspaceFolder}",
             "args": [
                 "--fixture-file", "internal/dump/testdata/modes1.bin",
@@ -72,7 +84,7 @@
             "type": "go",
             "request": "launch",
             "mode": "auto",
-            "program": "${workspaceFolder}/cmd/dump1090",
+            "program": "${workspaceFolder}/cmd/adsb1090",
             "cwd": "${workspaceFolder}",
             "args": [
                 "--fixture-file", "internal/dump/testdata/modes1.bin",
@@ -84,7 +96,7 @@
             "type": "go",
             "request": "launch",
             "mode": "auto",
-            "program": "${workspaceFolder}/cmd/dump1090",
+            "program": "${workspaceFolder}/cmd/adsb1090",
             "cwd": "${workspaceFolder}",
             "args": [
                 "--fixture-file", "internal/dump/testdata/modes1.bin",
@@ -96,9 +108,9 @@
             "type": "go",
             "request": "launch",
             "mode": "auto",
-            "program": "${workspaceFolder}/cmd/udp",
+            "program": "${workspaceFolder}/cmd/bench",
             "args": [
-                "bind",
+                "udp", "bind",
                 "-p", "2000"
             ]
         },
@@ -107,9 +119,9 @@
             "type": "go",
             "request": "launch",
             "mode": "auto",
-            "program": "${workspaceFolder}/cmd/tcp",
+            "program": "${workspaceFolder}/cmd/bench",
             "args": [
-                "dial",
+                "tcp", "dial",
                 "-a", "127.0.0.1:2000"
             ]
         },
@@ -118,11 +130,22 @@
             "type": "go",
             "request": "launch",
             "mode": "auto",
-            "program": "${workspaceFolder}/cmd/tcp",
+            "program": "${workspaceFolder}/cmd/bench",
             "args": [
-                "bind",
+                "tcp", "bind",
                 "--port", "30003"
             ]
-        }
+        },
+        {
+            "name": "Download aircrafts",
+            "type": "go",
+            "request": "launch",
+            "mode": "auto",
+            "program": "${workspaceFolder}/cmd/adsb1090",
+            "cwd": "${workspaceFolder}",
+            "args": [
+                "aircraft", "download",
+            ]
+        },
     ]
 }

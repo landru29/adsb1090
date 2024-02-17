@@ -7,8 +7,8 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/landru29/dump1090/internal/dump"
-	"github.com/landru29/dump1090/internal/serialize"
+	"github.com/landru29/adsb1090/internal/model"
+	"github.com/landru29/adsb1090/internal/serialize"
 )
 
 // Transporter is the file transporter.
@@ -18,7 +18,7 @@ type Transporter struct {
 }
 
 // Transport implements the transport.Transporter interface.
-func (t Transporter) Transport(ac *dump.Aircraft) error {
+func (t Transporter) Transport(ac *model.Aircraft) error {
 	data, err := t.serializer.Serialize(ac)
 	if err != nil {
 		return err
@@ -39,18 +39,24 @@ func New(ctx context.Context, filename string, serializer serialize.Serializer) 
 		return nil, fmt.Errorf("no valid formater")
 	}
 
-	f, err := os.OpenFile(filepath.Clean(filename), os.O_APPEND|os.O_WRONLY|os.O_CREATE, 0o600) //nolint: gomnd
+	file, err := os.OpenFile(filepath.Clean(filename), os.O_APPEND|os.O_WRONLY|os.O_CREATE, 0o600) //nolint: gomnd
 	if err != nil {
 		return nil, err
 	}
 
 	go func() {
 		<-ctx.Done()
-		_ = f.Close()
+
+		_ = file.Close()
 	}()
 
 	return &Transporter{
 		serializer: serializer,
-		fileDesc:   f,
+		fileDesc:   file,
 	}, nil
+}
+
+// String implements the transport.Transporter interface.
+func (t Transporter) String() string {
+	return "file"
 }

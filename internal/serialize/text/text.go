@@ -2,42 +2,50 @@
 package text
 
 import (
-	"strings"
+	"bytes"
 
-	"github.com/landru29/dump1090/internal/dump"
+	"github.com/landru29/adsb1090/internal/model"
 )
 
 // Serializer is the text serializer.
 type Serializer struct{}
 
 // Serialize implements the Serialize.Serializer interface.
-func (s Serializer) Serialize(ac any) ([]byte, error) {
-	if ac == nil {
-		return nil, nil
+func (s Serializer) Serialize(planes ...any) ([]byte, error) {
+	output := [][]byte{}
+
+	for _, ac := range planes {
+		switch aircraft := ac.(type) {
+		case model.Aircraft:
+			data, err := s.Serialize(&aircraft)
+			if err != nil {
+				return nil, err
+			}
+
+			output = append(output, data)
+
+		case *model.Aircraft:
+			if aircraft != nil {
+				output = append(output, []byte(aircraft.String()))
+			}
+		case []model.Aircraft:
+			data, err := s.Serialize(model.UntypeArray(aircraft)...)
+			if err != nil {
+				return nil, err
+			}
+
+			output = append(output, data)
+		case []*model.Aircraft:
+			data, err := s.Serialize(model.UntypeArray(aircraft)...)
+			if err != nil {
+				return nil, err
+			}
+
+			output = append(output, data)
+		}
 	}
 
-	switch aircraft := ac.(type) {
-	case dump.Aircraft:
-		return s.Serialize([]*dump.Aircraft{&aircraft})
-	case *dump.Aircraft:
-		return s.Serialize([]*dump.Aircraft{aircraft})
-	case []dump.Aircraft:
-		out := make([]*dump.Aircraft, len(aircraft))
-		for idx := range aircraft {
-			out[idx] = &aircraft[idx]
-		}
-
-		return s.Serialize(out)
-	case []*dump.Aircraft:
-		out := make([]string, len(aircraft))
-		for idx, plane := range aircraft {
-			out[idx] = plane.String()
-		}
-
-		return []byte(strings.Join(out, "\n")), nil
-	}
-
-	return nil, nil
+	return bytes.Join(output, []byte("\n")), nil
 }
 
 // MimeType implements the Serialize.Serializer interface.

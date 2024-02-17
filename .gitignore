@@ -1,3 +1,6 @@
 deb.*
 bin.*
 /dump1090
+/aircraftDatabase-*.csv
+/legacy
+*.local.*

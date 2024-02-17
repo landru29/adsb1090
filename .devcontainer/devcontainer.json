@@ -1,0 +1,51 @@
+// For format details, see https://aka.ms/devcontainer.json. For config options, see the
+// README at: https://github.com/devcontainers/templates/tree/main/src/go
+{
+	"name": "adsb1090",
+	"build": {
+        "dockerfile": "Dockerfile"
+    },
+	"runArgs": ["--name", "adsb1090", "--volume", "${localEnv:HOME}/.ssh:/home/vscode/.ssh:ro", "-p=30003:30003"],
+
+	"workspaceMount": "source=${localWorkspaceFolder},target=/app/adsb1090,type=bind",
+	"workspaceFolder": "/app/adsb1090",
+	"containerUser": "vscode",
+	"overrideCommand": false,
+
+	"customizations": {
+		"vscode": {
+			"settings": {
+				"go.toolsManagement.checkForUpdates": "local",
+				"go.useLanguageServer": true,
+				"go.gopath": "/go",
+				"go.lintTool": "golangci-lint",
+				"terminal.integrated.profiles.linux": {
+					"zsh": {
+						"path": "/usr/bin/zsh",
+						"args": ["-l"]
+					}
+				},
+				"terminal.integrated.defaultProfile.linux": "zsh",
+				"files.associations": {
+					"array": "c",
+					"string": "c",
+					"string_view": "c"
+				},
+				"plantuml.render": "PlantUMLServer",
+				"plantuml.server": "https://www.plantuml.com/plantuml"
+			},
+
+			"extensions": [
+				"golang.Go",
+				"ms-vscode.cpptools-extension-pack",
+				"jebbs.plantuml"
+			]
+		}
+	},
+	"features": {
+		"git": "os-provided"
+	},
+	"forwardPorts": [30003],
+	"postCreateCommand": "/app/adsb1090/.devcontainer/post-install.sh"
+}
+

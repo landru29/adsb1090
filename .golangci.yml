@@ -1,0 +1,75 @@
+run:
+  timeout: 2m
+
+linters-settings:
+  cyclop:
+    max-complexity: 15
+  funlen:
+    lines: 100
+    statements: 40
+
+linters:
+  enable-all: true
+  disable:
+    - wrapcheck
+    - exhaustivestruct
+    - goerr113
+    - exhaustruct
+    - interfacebloat
+    - depguard
+    - nolintlint
+# Deprecated
+    - scopelint
+    - interfacer
+    - maligned
+    - structcheck
+    - nosnakecase
+    - golint
+    - deadcode
+    - ifshort
+    - varcheck
+
+issues:
+  exclude-use-default: false
+  exclude-rules:
+    - path: .*_test\.go
+      linters:
+        - funlen
+        - lll
+        - dupl
+        - goconst
+        - forcetypeassert
+        - dupl
+        - varnamelen
+
+    - path: internal/compactposition/.*\.go
+      linters:
+        - gomnd
+
+    - path: internal/processor/.*\.go
+      linters:
+        - misspell
+
+    - path: internal/dump/database.go
+      linters:
+        - gomnd
+    
+    - path: internal/serialize/nmea/mid.go
+      linters:
+        - gomnd
+
+    - path: internal/serialize/nmea/aivdm.go
+      linters:
+        - gomnd
+
+    - path: internal/serialize/nmea/nmea.go
+      linters:
+        - gomnd
+
+    - path: internal/serialize/basestation/basestation.go
+      linters:
+        - gomnd
+
+    - path: internal/adsb/adsb.go
+      linters:
+        - gomnd

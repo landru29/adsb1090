@@ -4,8 +4,8 @@ package screen
 import (
 	"fmt"
 
-	"github.com/landru29/dump1090/internal/dump"
-	"github.com/landru29/dump1090/internal/serialize"
+	"github.com/landru29/adsb1090/internal/model"
+	"github.com/landru29/adsb1090/internal/serialize"
 )
 
 // Transporter is the screen transporter.
@@ -14,8 +14,16 @@ type Transporter struct {
 }
 
 // Transport implements the transport.Transporter interface.
-func (t Transporter) Transport(ac *dump.Aircraft) error {
-	data, err := t.serializer.Serialize(ac)
+func (t Transporter) Transport(aircraft *model.Aircraft) error {
+	if aircraft == nil {
+		return nil
+	}
+
+	if t.serializer == nil {
+		return serialize.ErrMissingSerializer
+	}
+
+	data, err := t.serializer.Serialize(aircraft)
 	if err != nil {
 		return err
 	}
@@ -38,4 +46,9 @@ func New(serializer serialize.Serializer) (*Transporter, error) {
 	return &Transporter{
 		serializer: serializer,
 	}, nil
+}
+
+// String implements the transport.Transporter interface.
+func (t Transporter) String() string {
+	return "screen"
 }

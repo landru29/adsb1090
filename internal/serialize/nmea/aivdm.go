@@ -38,7 +38,7 @@ const (
 	radioChannelB radioChannel = "B"
 )
 
-// payload is the VDM / VDO payload
+// payload is the VDM / VDO payload.
 type payload struct {
 	MMSI              uint32            // 8-37 (30)
 	NavigationStatus  navigationStatus  // 38-41 (4)
@@ -64,78 +64,85 @@ const (
 
 func (p payload) Binary() (string, error) { //nolint: funlen,cyclop
 	encoded := make([]uint8, 28)
-	if _, err := payloadAddData(encoded, uint8(1), 0, 6); err != nil {
+	if _, err := payloadAddData(encoded, uint8(1), 0, 6); err != nil { //nolint: gomnd
 		return "", err
 	}
 
-	if _, err := payloadAddData(encoded, p.MMSI, 8, 30); err != nil {
+	if _, err := payloadAddData(encoded, p.MMSI, 8, 30); err != nil { //nolint: gomnd
 		return "", err
 	}
 
-	if _, err := payloadAddData(encoded, uint8(p.NavigationStatus), 38, 4); err != nil {
+	if _, err := payloadAddData(encoded, uint8(p.NavigationStatus), 38, 4); err != nil { //nolint: gomnd
 		return "", err
 	}
 
 	rot := 128.0
+
 	if p.RateOfTurn != rateNoTurnInfo {
-		rot = 4.733 * math.Sqrt(math.Abs(p.RateOfTurn))
+		rot = 4.733 * math.Sqrt(math.Abs(p.RateOfTurn)) //nolint: gomnd
+
 		if p.RateOfTurn < 0 {
 			rot = -rot
 		}
-		if rot > 126 {
+
+		if rot > 126 { //nolint: gomnd
 			rot = 127
 		}
 
 		if rot < -126 {
-			rot = -127
+			rot = -127 //nolint: gomnd
 		}
 	}
 
-	if _, err := payloadAddData(encoded, int8(rot), 42, 8); err != nil {
+	if _, err := payloadAddData(encoded, int8(rot), 42, 8); err != nil { //nolint: gomnd
 		return "", err
 	}
 
-	sog := uint16(math.Abs(p.SpeedOverGround * 10))
-	if _, err := payloadAddData(encoded, sog, 50, 10); err != nil {
+	sog := uint16(math.Abs(p.SpeedOverGround * 10)) //nolint: gomnd
+
+	if _, err := payloadAddData(encoded, sog, 50, 10); err != nil { //nolint: gomnd
 		return "", err
 	}
 
-	if _, err := payloadAddData(encoded, p.PositionAccuracy, 60, 1); err != nil {
+	if _, err := payloadAddData(encoded, p.PositionAccuracy, 60, 1); err != nil { //nolint: gomnd
 		return "", err
 	}
 
-	lng := (int64(p.Longitude*600000.0+324000000) % 216000000) - 108000000
-	if _, err := payloadAddData(encoded, lng, 61, 28); err != nil {
+	lng := (int64(p.Longitude*600000.0+324000000) % 216000000) - 108000000 //nolint: gomnd
+
+	if _, err := payloadAddData(encoded, lng, 61, 28); err != nil { //nolint: gomnd
 		return "", err
 	}
 
-	lat := int64(p.Latitude * 600000.0)
-	if _, err := payloadAddData(encoded, lat, 89, 27); err != nil {
+	lat := int64(p.Latitude * 600000.0) //nolint: gomnd
+
+	if _, err := payloadAddData(encoded, lat, 89, 27); err != nil { //nolint: gomnd
 		return "", err
 	}
 
-	cog := uint16(math.Abs(p.CourseOverGround * 10))
-	if _, err := payloadAddData(encoded, cog, 116, 12); err != nil {
+	cog := uint16(math.Abs(p.CourseOverGround * 10)) //nolint: gomnd
+
+	if _, err := payloadAddData(encoded, cog, 116, 12); err != nil { //nolint: gomnd
 		return "", err
 	}
 
-	if _, err := payloadAddData(encoded, p.TrueHeading, 128, 9); err != nil {
+	if _, err := payloadAddData(encoded, p.TrueHeading, 128, 9); err != nil { //nolint: gomnd
 		return "", err
 	}
 
-	if _, err := payloadAddData(encoded, p.TimeStampSecond, 137, 6); err != nil {
+	if _, err := payloadAddData(encoded, p.TimeStampSecond, 137, 6); err != nil { //nolint: gomnd
 		return "", err
 	}
 
-	if _, err := payloadAddData(encoded, uint8(p.ManeuverIndicator), 143, 2); err != nil {
+	if _, err := payloadAddData(encoded, uint8(p.ManeuverIndicator), 143, 2); err != nil { //nolint: gomnd
 		return "", err
 	}
 
-	if _, err := payloadAddData(encoded, p.RaimFlag, 148, 1); err != nil {
+	if _, err := payloadAddData(encoded, p.RaimFlag, 148, 1); err != nil { //nolint: gomnd
 		return "", err
 	}
 
-	if _, err := payloadAddData(encoded, p.RadioStatus, 149, 19); err != nil {
+	if _, err := payloadAddData(encoded, p.RadioStatus, 149, 19); err != nil { //nolint: gomnd
 		return "", err
 	}
 

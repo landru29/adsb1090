@@ -10,7 +10,7 @@ import (
 	"reflect"
 	"strings"
 
-	"github.com/landru29/dump1090/internal/errors"
+	"github.com/landru29/adsb1090/internal/errors"
 )
 
 const (
@@ -53,11 +53,11 @@ func (f fields) String() string {
 }
 
 func payloadAddBytes(dest []uint8, data []uint8, bitPosition uint8, length uint8) {
-	startInputBit := uint8(len(data))*8 - length
+	startInputBit := uint8(len(data))*8 - length //nolint: gomnd
 	for idx := uint8(0); idx < length; idx++ {
-		readBit := (data[(startInputBit+idx)/byteSize] << ((startInputBit + idx) % byteSize)) & 0x80
+		readBit := (data[(startInputBit+idx)/byteSize] << ((startInputBit + idx) % byteSize)) & 0x80 //nolint: gomnd
 
-		writeBit := readBit >> ((bitPosition+idx)%bitSize + 2)
+		writeBit := readBit >> ((bitPosition+idx)%bitSize + 2) //nolint: gomnd
 		dest[(bitPosition+idx)/bitSize] |= writeBit
 	}
 }
@@ -67,7 +67,7 @@ func payloadAddData(dest []uint8, data any, bitPosition uint8, length uint8) (ui
 
 	switch value := data.(type) {
 	case uint64:
-		encoded = make([]uint8, 8)
+		encoded = make([]uint8, 8) //nolint: gomnd
 		binary.BigEndian.PutUint64(encoded, value)
 
 	case bool:
@@ -77,7 +77,7 @@ func payloadAddData(dest []uint8, data any, bitPosition uint8, length uint8) (ui
 		}
 
 	case int64:
-		encoded = make([]uint8, 8)
+		encoded = make([]uint8, 8) //nolint: gomnd
 		binary.BigEndian.PutUint64(encoded, uint64(value))
 
 	case uint8:
@@ -110,11 +110,12 @@ func payloadAddData(dest []uint8, data any, bitPosition uint8, length uint8) (ui
 
 func encodeBinaryPayload(input []uint8) string {
 	str := ""
+
 	for idx, elt := range input {
-		if (elt & 0x3f) > 0x27 {
-			str = str[:idx] + string(elt+56)
+		if (elt & 0x3f) > 0x27 { //nolint: gomnd
+			str = str[:idx] + string(elt+56) //nolint: gomnd
 		} else {
-			str = str[:idx] + string(elt+48)
+			str = str[:idx] + string(elt+48) //nolint: gomnd
 		}
 	}
 
