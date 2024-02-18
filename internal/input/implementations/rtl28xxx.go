@@ -5,6 +5,7 @@ import (
 	"context"
 
 	"github.com/landru29/adsb1090/internal/errors"
+	"github.com/landru29/adsb1090/internal/logger"
 	"github.com/landru29/adsb1090/internal/processor"
 )
 
@@ -50,6 +51,8 @@ func New(opts ...RTL28Configurator) *RTL28xxx {
 
 // Start implements the input.Starter interface.
 func (s *RTL28xxx) Start(ctx context.Context, processors ...processor.Processer) error {
+	log, loggerFound := logger.Logger(ctx)
+
 	deviceCount := DeviceCount()
 	if deviceCount == 0 {
 		return ErrNoDeviceFound
@@ -66,28 +69,56 @@ func (s *RTL28xxx) Start(ctx context.Context, processors ...processor.Processer)
 		return err
 	}
 
+	if loggerFound {
+		log.Info("device found")
+	}
+
 	s.dev = device
 
 	if err := s.dev.SetCenterFreq(modeSfrequency); err != nil {
 		return err
 	}
 
+	if loggerFound {
+		log.Info("configuring device", "frequency", modeSfrequency)
+	}
+
 	if err := s.dev.SetSampleRate(sampleRate); err != nil {
 		return err
+	}
+
+	if loggerFound {
+		log.Info("configuring sample rate", "rate", sampleRate)
 	}
 
 	if err := s.dev.SetAgcMode(s.enableAGC); err != nil {
 		return err
 	}
 
+	if loggerFound {
+		log.Info("configuring AGC", "agc", s.enableAGC)
+	}
+
 	if err := s.dev.SetTunerGainMode(s.gain > 0); err != nil {
 		return err
+	}
+
+	if loggerFound {
+		log.Info("configuring gain mode", "mode", map[bool]string{false: "auto", true: "manual"}[s.gain > 0])
 	}
 
 	if s.gain > 0 {
 		if err := s.dev.SetTunerGain(s.gain); err != nil {
 			return err
 		}
+
+		if loggerFound {
+			log.Info("configuring gain", "gain", s.gain)
+		}
+	}
+
+	if loggerFound {
+		log.Info("device ready")
 	}
 
 	return s.dev.ReadAsync(ctx, asyncBufNumber, dataLen)

@@ -38,7 +38,7 @@ do
             cat /adsb1090-${ARCH}/DEBIAN/control | sed -e "s/amd64/${ARCH}/g">/tmp/control
             cp /tmp/control /adsb1090-${ARCH}/DEBIAN/control
             
-            go build -o /adsb1090-${ARCH}/usr/local/bin/dumb1090 ./cmd/adsb1090/...
+            go build -o /adsb1090-${ARCH}/usr/local/bin/adsb1090 -buildvcs=false ./cmd/adsb1090/...
 
             dpkg-deb --build --root-owner-group /adsb1090-${ARCH}
             cp /adsb1090-${ARCH}.deb /deb/.

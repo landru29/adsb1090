@@ -5,7 +5,14 @@
 	"build": {
         "dockerfile": "Dockerfile"
     },
-	"runArgs": ["--name", "adsb1090", "--volume", "${localEnv:HOME}/.ssh:/home/vscode/.ssh:ro", "-p=30003:30003"],
+	"runArgs": [
+		"--name", "adsb1090", 
+		"--volume", "${localEnv:HOME}/.ssh:/home/vscode/.ssh:ro", 
+		"-p=30003:30003",
+	],
+
+	"mounts": ["type=bind,source=/dev/bus/usb,target=/dev/bus/usb"],
+
 
 	"workspaceMount": "source=${localWorkspaceFolder},target=/app/adsb1090,type=bind",
 	"workspaceFolder": "/app/adsb1090",
@@ -38,7 +45,9 @@
 			"extensions": [
 				"golang.Go",
 				"ms-vscode.cpptools-extension-pack",
-				"jebbs.plantuml"
+				"jebbs.plantuml",
+				"ms-azuretools.vscode-docker",
+				"ms-vscode.makefile-tools"
 			]
 		}
 	},

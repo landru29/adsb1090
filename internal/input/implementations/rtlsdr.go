@@ -14,6 +14,7 @@ import (
 	"unsafe"
 
 	localcontext "github.com/landru29/adsb1090/internal/input/context"
+	"github.com/landru29/adsb1090/internal/logger"
 	"github.com/landru29/adsb1090/internal/processor"
 )
 
@@ -188,8 +189,18 @@ func (d *Device) ResetBuffer() error {
 // ReadAsync reads samples from the device asynchronously. This function will block until
 // it is being canceled using rtlsdr_cancel_async()
 func (d *Device) ReadAsync(ctx context.Context, bufNum uint32, bufLen uint32) error {
+	log, logFound := logger.Logger(ctx)
+
+	if logFound {
+		log.Info("Launching an asynchronous read on the device")
+	}
+
 	if intErr := C.rtlsdrReadAsync(d.dev, localcontext.New(ctx, d.processors).Ccontext, C.uint32_t(bufNum), C.uint32_t(bufLen)); intErr != 0 { //nolint: gomnd,nlreturn,nolintlint,lll
 		return fmt.Errorf("RtlsdrReadAsync: %d", intErr)
+	}
+
+	if logFound {
+		log.Info("asynchronous read ended")
 	}
 
 	return nil

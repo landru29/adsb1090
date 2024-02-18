@@ -1,4 +1,4 @@
-FROM mcr.microsoft.com/devcontainers/go:1.21-bullseye
+FROM mcr.microsoft.com/devcontainers/go:1.21-bookworm
 
 ARG USERNAME=vscode
 
@@ -25,9 +25,9 @@ RUN sudo mkdir -p /app/c && \
     cd /app/c/rtl-sdr && sudo dpkg-buildpackage -us -uc && \
     sudo apt install -y /app/c/*.deb
 
-RUN sudo update-alternatives --install /usr/bin/python python /usr/bin/python3.9 1 \
-    && pip install pip --upgrade \
-    && pip install pyModeS
+RUN sudo update-alternatives --install /usr/bin/python python /usr/bin/python3.11 1 \
+    && pip install pip --upgrade --break-system-packages \
+    && pip install pyModeS --break-system-packages
 
 RUN mknod /tmp/log p
 
