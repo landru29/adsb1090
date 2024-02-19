@@ -17,6 +17,18 @@
             "buildFlags": "-ldflags='-X github.com/landru29/adsb1090/internal/input/implementations.debug=false'"
         },
         {
+            "name": "ADSB1090-device",
+            "type": "go",
+            "request": "launch",
+            "mode": "auto",
+            "program": "${workspaceFolder}/cmd/adsb1090",
+            "cwd": "${workspaceFolder}",
+            "args": [
+                "--screen", "text",
+            ],
+            "buildFlags": "-ldflags='-X github.com/landru29/adsb1090/internal/input/implementations.debug=false'"
+        },
+        {
             "name": "ADSB1090",
             "type": "go",
             "request": "launch",

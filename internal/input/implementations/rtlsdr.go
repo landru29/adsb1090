@@ -128,6 +128,11 @@ func (d *Device) SetTunerGain(gain float64) error {
 	return nil
 }
 
+// TunerGain read the current gain on the tuner.
+func (d *Device) TunerGain() float64 {
+	return float64(C.rtlsdr_get_tuner_gain(d.dev) / 10.0)
+}
+
 // SetFreqCorrection sets the frequency correction value for the device.
 func (d *Device) SetFreqCorrection(partsPerMillion int) error {
 	if intErr := C.rtlsdr_set_freq_correction(d.dev, C.int(partsPerMillion)); intErr != 0 { //nolint: gomnd,nlreturn,nolintlint,lll
@@ -195,7 +200,12 @@ func (d *Device) ReadAsync(ctx context.Context, bufNum uint32, bufLen uint32) er
 		log.Info("Launching an asynchronous read on the device")
 	}
 
-	if intErr := C.rtlsdrReadAsync(d.dev, localcontext.New(ctx, d.processors).Ccontext, C.uint32_t(bufNum), C.uint32_t(bufLen)); intErr != 0 { //nolint: gomnd,nlreturn,nolintlint,lll
+	if intErr := C.rtlsdrReadAsync(
+		d.dev,
+		localcontext.New(ctx, d.processors).Ccontext,
+		C.uint32_t(bufNum),
+		C.uint32_t(bufLen), //nolint: nlreturn
+	); intErr != 0 {
 		return fmt.Errorf("RtlsdrReadAsync: %d", intErr)
 	}
 

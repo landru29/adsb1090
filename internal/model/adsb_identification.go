@@ -16,7 +16,7 @@ const (
 // Category is the aircraft category.
 type Category byte
 
-// Identification id the aircraft identification.
+// Identification is the aircraft identification.
 type Identification struct {
 	ExtendedSquitter
 }

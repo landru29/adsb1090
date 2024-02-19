@@ -35,6 +35,8 @@ func New(
 	cfg *Config,
 	processors []processor.Processer,
 ) (*App, error) {
+	log.Info("Initializing application")
+
 	implementations.InitTables()
 
 	output := &App{

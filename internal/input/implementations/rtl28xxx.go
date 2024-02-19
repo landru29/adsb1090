@@ -17,7 +17,7 @@ const (
 	sampleRate     = 2000000
 
 	asyncBufNumber = 12
-	dataLen        = (16 * 16384) /* 256k */ //nolint: gomnd
+	dataLen        = (16 * 32 * 512) /* 256k */ //nolint: gomnd
 )
 
 // RTL28Configurator is the Source configurator.
@@ -50,7 +50,7 @@ func New(opts ...RTL28Configurator) *RTL28xxx {
 }
 
 // Start implements the input.Starter interface.
-func (s *RTL28xxx) Start(ctx context.Context, processors ...processor.Processer) error {
+func (s *RTL28xxx) Start(ctx context.Context, processors ...processor.Processer) error { //nolint: cyclop
 	log, loggerFound := logger.Logger(ctx)
 
 	deviceCount := DeviceCount()
@@ -117,8 +117,12 @@ func (s *RTL28xxx) Start(ctx context.Context, processors ...processor.Processer)
 		}
 	}
 
+	if err := s.dev.ResetBuffer(); err != nil {
+		return err
+	}
+
 	if loggerFound {
-		log.Info("device ready")
+		log.Info("device ready", "gain", s.dev.TunerGain())
 	}
 
 	return s.dev.ReadAsync(ctx, asyncBufNumber, dataLen)
