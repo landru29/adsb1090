@@ -44,9 +44,9 @@ func New(
 		return nil, logger.ErrMissingLogger
 	}
 
-	serial, found := formater[conf.format]
+	serial, found := formater[conf.Format]
 	if !found {
-		return nil, fmt.Errorf("serializer %s not found", conf.format)
+		return nil, fmt.Errorf("serializer %s not found", conf.Format)
 	}
 
 	output := &Transporter{
@@ -54,14 +54,14 @@ func New(
 		log:      log,
 	}
 
-	switch conf.direction {
+	switch conf.Direction {
 	case protocolBind:
-		return output, output.Bind(ctx, conf.protocolType, conf.addr)
+		return output, output.Bind(ctx, conf.ProtocolType, conf.Addr)
 	case protocolDial:
-		return output, output.Dial(ctx, conf.protocolType, conf.addr)
+		return output, output.Dial(ctx, conf.ProtocolType, conf.Addr)
 	}
 
-	return nil, fmt.Errorf("unknown %s: specify 'dial' or 'bind'", conf.direction)
+	return nil, fmt.Errorf("unknown %s: specify 'dial' or 'bind'", conf.Direction)
 }
 
 // Bind is the net binder.

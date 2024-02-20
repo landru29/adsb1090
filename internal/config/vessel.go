@@ -1,4 +1,4 @@
-package main
+package config
 
 import (
 	"fmt"
@@ -6,10 +6,11 @@ import (
 	"github.com/landru29/adsb1090/internal/serialize/nmea"
 )
 
-type vessel nmea.VesselType
+// Vessel is a vessel type for NMEA purpose.
+type Vessel nmea.VesselType
 
 // String implements the pflag.Value interface.
-func (v vessel) String() string {
+func (v Vessel) String() string {
 	return map[nmea.VesselType]string{
 		nmea.VesselTypeAircraft:   "aircraft",
 		nmea.VesselTypeHelicopter: "helicopter",
@@ -17,7 +18,7 @@ func (v vessel) String() string {
 }
 
 // Set implements the pflag.Value interface.
-func (v *vessel) Set(str string) error {
+func (v *Vessel) Set(str string) error {
 	vesselType, ok := map[string]nmea.VesselType{
 		"aircraft":   nmea.VesselTypeAircraft,
 		"helicopter": nmea.VesselTypeHelicopter,
@@ -26,12 +27,12 @@ func (v *vessel) Set(str string) error {
 		return fmt.Errorf("unknow vessel type %s", str)
 	}
 
-	*v = vessel(vesselType)
+	*v = Vessel(vesselType)
 
 	return nil
 }
 
 // Type implements the pflag.Value interface.
-func (v vessel) Type() string {
+func (v Vessel) Type() string {
 	return "vessel type"
 }

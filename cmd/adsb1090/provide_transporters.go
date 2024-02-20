@@ -6,6 +6,7 @@ import (
 	"log/slog"
 	"strings"
 
+	"github.com/landru29/adsb1090/internal/config"
 	"github.com/landru29/adsb1090/internal/database"
 	"github.com/landru29/adsb1090/internal/model"
 	"github.com/landru29/adsb1090/internal/serialize"
@@ -22,7 +23,7 @@ func provideTransporters(
 	availableSerializers []serialize.Serializer,
 	serializers map[string]serialize.Serializer,
 	aircraftDB *database.ElementStorage[model.ICAOAddr, model.Aircraft],
-	httpConf httpConfig,
+	httpConf config.HTTPConfig,
 	udpConf net.ProtocolConfig,
 	tcpConf net.ProtocolConfig,
 	transportScreen string,
@@ -30,15 +31,15 @@ func provideTransporters(
 ) ([]transport.Transporter, error) {
 	transporters := []transport.Transporter{}
 
-	if httpConf.addr != "" {
-		httpTransport, err := http.New(ctx, httpConf.addr, httpConf.apiPath, aircraftDB, availableSerializers)
+	if httpConf.Addr != "" {
+		httpTransport, err := http.New(ctx, httpConf.Addr, httpConf.APIPath, aircraftDB, availableSerializers)
 		if err != nil {
 			return nil, err
 		}
 
 		transporters = append(transporters, httpTransport)
 
-		log.Info("API", "addr", fmt.Sprintf("http://%s%s\n", httpConf.addr, httpConf.apiPath))
+		log.Info("API", "addr", fmt.Sprintf("http://%s%s\n", httpConf.Addr, httpConf.APIPath))
 	}
 
 	if udpConf.IsValid() {

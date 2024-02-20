@@ -4,23 +4,12 @@ package application
 import (
 	"context"
 	"log/slog"
-	"time"
 
+	"github.com/landru29/adsb1090/internal/config"
 	"github.com/landru29/adsb1090/internal/input"
 	"github.com/landru29/adsb1090/internal/input/implementations"
 	"github.com/landru29/adsb1090/internal/processor"
 )
-
-// Config is the application configuration.
-type Config struct {
-	FixturesFilename string
-	FixtureLoop      bool
-	DeviceIndex      uint32
-	Frequency        uint32
-	Gain             float64
-	EnableAGC        bool
-	DatabaseLifetime time.Duration
-}
 
 // App is the main application.
 type App struct {
@@ -32,7 +21,7 @@ type App struct {
 // New creates a new application.
 func New(
 	log *slog.Logger,
-	cfg *Config,
+	cfg *config.Config,
 	processors []processor.Processer,
 ) (*App, error) {
 	log.Info("Initializing application")

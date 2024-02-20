@@ -18,16 +18,16 @@ const (
 
 // ProtocolConfig is the net protocol parameter.
 type ProtocolConfig struct {
-	addr         string
-	format       string
-	direction    protocolDirection
-	protocolType protocolType
+	Addr         string
+	Format       string
+	Direction    protocolDirection
+	ProtocolType protocolType
 }
 
 // NewProtocol creates a new ProtocolConfig.
 func NewProtocol(pType string) ProtocolConfig {
 	return ProtocolConfig{
-		protocolType: protocolType(pType),
+		ProtocolType: protocolType(pType),
 	}
 }
 
@@ -35,10 +35,10 @@ func NewProtocol(pType string) ProtocolConfig {
 func (p *ProtocolConfig) String() string {
 	return fmt.Sprintf(
 		"%s/%s:%s@%s",
-		p.direction,
-		p.protocolType,
-		p.format,
-		p.addr,
+		p.Direction,
+		p.ProtocolType,
+		p.Format,
+		p.Addr,
 	)
 }
 
@@ -49,17 +49,17 @@ func (p *ProtocolConfig) Set(str string) error {
 	case 1:
 		format, addr := parseData(actionSplitter[0])
 
-		p.format = format
-		p.direction = protocolDial
-		p.addr = addr
+		p.Format = format
+		p.Direction = protocolDial
+		p.Addr = addr
 
 		return nil
 	case 2: //nolint: gomnd
 		format, addr := parseData(actionSplitter[1])
 
-		p.format = format
-		p.direction = protocolDirection(actionSplitter[0])
-		p.addr = addr
+		p.Format = format
+		p.Direction = protocolDirection(actionSplitter[0])
+		p.Addr = addr
 
 		return nil
 	}
@@ -74,7 +74,7 @@ func (p *ProtocolConfig) Type() string {
 
 // IsValid checks if the protocol configuration is valid.
 func (p ProtocolConfig) IsValid() bool {
-	return p.addr != ""
+	return p.Addr != ""
 }
 
 func parseData(str string) (string, string) {
