@@ -8,13 +8,15 @@ build-adsb1090.%: docker.% deb.%
 	    --mount type=bind,source=$(PWD)/$(subst build-adsb1090,deb,$@),target=/deb \
 		--volume $(PWD)/..:/application:ro \
 		$(image_name)-$(subst build-adsb1090.,,$@) \
-		build-adsb1090
+		build-adsb1090 && \
+		find . -type d -iname 'deb.*' -exec tar czf {}.tgz {} \;
 
 build-driver.%: docker.% deb.%
 	docker run \
 	    --mount type=bind,source=$(PWD)/$(subst build-driver,deb,$@),target=/deb \
 		$(image_name)-$(subst build-driver.,,$@) \
-		build-driver
+		build-driver && \
+		find . -type d -iname 'deb.*' -exec tar czf {}.tgz {} \;
 
 docker.%:
 	docker build -t $(image_name)-$(subst docker.,,$@) -f $(subst docker,Dockerfile,$@) .

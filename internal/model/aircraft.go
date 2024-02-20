@@ -17,7 +17,8 @@ type Aircraft struct {
 	IcaoAddress        ICAOAddr       `json:"icaoAddress"`
 	Altitude           float64        `json:"altitude,omitempty"`
 	Position           *Position      `json:"position,omitempty"`
-	Flight             string         `json:"flight"`                /* Flight number */
+	Flight             string         `json:"flight"` /* Flight number */
+	FlightStatus       *FlightStatus  `json:"flightStatus,omitempty"`
 	Addr               ICAOAddr       `json:"icao"`                  /* ICAO address */
 	GroundSpeed        *float64       `json:"groundSpeed,omitempty"` /* Velocity computed from EW and NS components. */
 	AirSpeed           *float64       `json:"airSpeed,omitempty"`    /* Velocity computed from EW and NS components. */

@@ -25,6 +25,10 @@ sudo apt-get install -y qemu qemu-user-static
 2. Build the application
 
 ```bash
+# Launch this command one time.
+docker run --privileged --rm tonistiigi/binfmt --install all
+
+# Build application.
 make build-driver
 make build-adsb1090
 ```

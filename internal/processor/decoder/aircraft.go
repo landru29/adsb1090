@@ -25,7 +25,6 @@ func buildAircraft(log *slog.Logger, squitters []model.QualifiedMessage, ref air
 		Operator:         ref.Operator,
 		Owner:            ref.Owner,
 		Built:            ref.Built,
-		Identity:         0, // TODO get identification
 	}
 
 	lastSquitter := squitters[len(squitters)-1]
@@ -59,10 +58,20 @@ func buildAircraft(log *slog.Logger, squitters []model.QualifiedMessage, ref air
 			case model.AirborneVelocity:
 				extendedSquitters.AirborneVelocity = append(extendedSquitters.AirborneVelocity, val)
 			}
+
+			continue
 		}
 
-		if shortSquitter, ok := genericSquitter.(model.ShortMessage); ok {
-			processShortMessage(log, &aircraft, shortSquitter)
+		if longMessage, ok := genericSquitter.(model.LongMessage); ok {
+			processLongMessage(log, &aircraft, longMessage)
+
+			continue
+		}
+
+		if shortMessage, ok := genericSquitter.(model.ShortMessage); ok {
+			processShortMessage(log, &aircraft, shortMessage)
+
+			continue
 		}
 	}
 
@@ -72,23 +81,57 @@ func buildAircraft(log *slog.Logger, squitters []model.QualifiedMessage, ref air
 }
 
 func processShortMessage(log *slog.Logger, aircraft *model.Aircraft, message model.ShortMessage) { //nolint: revive,unparam,lll,whitespace,wsl
+	switch message.DownlinkFormat() { //nolint: exhaustive
+	case model.DownlinkFormatAllCallReply:
+		// nothing to do
+	case model.DownlinkFormatShortAirAirSurveillance:
+		// nothing to do
+	case model.DownlinkFormatAltitudeReply:
+		surveillanceReplyWithAltitude := model.SurveillanceReplyWithAltitude{ShortMessage: message}
 
-	// switch squitter.DownlinkFormat() { //nolint: exhaustive
-	// case model.DownlinkFormatShortAirAirSurveillance:
-	// 	log.Debug("DownlinkFormatShortAirAirSurveillance")
+		flightStatus := surveillanceReplyWithAltitude.FlightStatus()
 
-	// case model.DownlinkFormatAltitudeReply:
-	// 	log.Debug("DownlinkFormatAltitudeReply")
+		aircraft.Altitude = surveillanceReplyWithAltitude.Altitude()
 
-	// case model.DownlinkFormatIdentityReply:
-	// 	log.Debug("DownlinkFormatIdentityReply")
+		aircraft.FlightStatus = &flightStatus
 
-	// case model.DownlinkFormatAllCallReply:
-	// 	log.Debug("DownlinkFormatAllCallReply")
+	case model.DownlinkFormatIdentityReply:
+		surveillanceReplyWithIdentification := model.SurveillanceReplyWithIdentification{ShortMessage: message}
 
-	// default:
-	// 	return
-	// }
+		flightStatus := surveillanceReplyWithIdentification.FlightStatus()
+
+		aircraft.Identity = surveillanceReplyWithIdentification.Identity()
+
+		aircraft.FlightStatus = &flightStatus
+	}
+
+	aircraft.LastUpdate = time.Now()
+}
+
+func processLongMessage(log *slog.Logger, aircraft *model.Aircraft, message model.LongMessage) { //nolint: revive,unparam,lll,whitespace,wsl
+	switch message.DownlinkFormat() { //nolint: exhaustive
+	case model.DownlinkFormatCommDExtendedLengthMessage:
+		// nothing to do
+	case model.DownlinkFormatLongAirAirSurveillance:
+		// nothing to do
+	case model.DownlinkFormatCommBWithAltitudeReply:
+		commBReplyWithAltitude := model.CommBReplyWithAltitude{LongMessage: message}
+
+		flightStatus := commBReplyWithAltitude.FlightStatus()
+
+		aircraft.Altitude = commBReplyWithAltitude.Altitude()
+
+		aircraft.FlightStatus = &flightStatus
+
+	case model.DownlinkFormatCommBWithIdentityReply:
+		commBReplyWithIdentification := model.CommBReplyWithIdentification{LongMessage: message}
+
+		flightStatus := commBReplyWithIdentification.FlightStatus()
+
+		aircraft.Identity = commBReplyWithIdentification.Identity()
+
+		aircraft.FlightStatus = &flightStatus
+	}
 
 	aircraft.LastUpdate = time.Now()
 }

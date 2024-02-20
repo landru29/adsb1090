@@ -10,38 +10,29 @@ import (
 	"github.com/dustin/go-humanize"
 	"github.com/guumaster/logsymbols"
 	"github.com/landru29/adsb1090/internal/aircraftdb"
-	"github.com/landru29/adsb1090/internal/application"
+	"github.com/landru29/adsb1090/internal/config"
 	"github.com/landru29/adsb1090/internal/model"
 	"github.com/spf13/cobra"
 )
 
-func aircraftCommand() *cobra.Command {
+func aircraftCommand(settings *config.Config) *cobra.Command {
 	output := &cobra.Command{
-		Use:   "aircraft",
-		Short: "aircraft",
-		Long:  "manage aircraft database",
-		PersistentPreRunE: func(cmd *cobra.Command, args []string) error {
-			settings, err := application.UserSettings()
-			if err != nil {
-				return err
-			}
-
-			cmd.SetContext(settings.WithSettings(cmd.Context()))
-
-			return nil
-		},
+		Use:              "aircraft",
+		Short:            "aircraft",
+		Long:             "manage aircraft database",
+		PersistentPreRun: func(cmd *cobra.Command, args []string) {},
 	}
 
 	output.AddCommand(
-		aircraftDownloadCommand(),
-		aircraftSearchCommand(),
-		aircraftCleanCommand(),
+		aircraftDownloadCommand(settings),
+		aircraftSearchCommand(settings),
+		aircraftCleanCommand(settings),
 	)
 
 	return output
 }
 
-func aircraftDownloadCommand() *cobra.Command {
+func aircraftDownloadCommand(settings *config.Config) *cobra.Command {
 	var urlStr string
 
 	output := &cobra.Command{
@@ -50,13 +41,6 @@ func aircraftDownloadCommand() *cobra.Command {
 		Long:  "download the latest aircraft database",
 		RunE: func(cmd *cobra.Command, args []string) error {
 			output := cmd.OutOrStdout()
-
-			settings, err := application.SettingsFromContext(cmd.Context())
-			if err != nil {
-				fmt.Fprintf(output, " %s\n", logsymbols.Error)
-
-				return fmt.Errorf("loading settings: %w", err)
-			}
 
 			if err := download(settings.AircraftDatabaseFile(), urlStr, output); err != nil {
 				return err
@@ -86,7 +70,7 @@ func aircraftDownloadCommand() *cobra.Command {
 	return output
 }
 
-func aircraftSearchCommand() *cobra.Command {
+func aircraftSearchCommand(settings *config.Config) *cobra.Command {
 	var (
 		registration string
 		addr         model.ICAOAddr
@@ -97,11 +81,6 @@ func aircraftSearchCommand() *cobra.Command {
 		Short: "search",
 		Long:  "search in the aircraft database",
 		RunE: func(cmd *cobra.Command, args []string) error {
-			settings, err := application.SettingsFromContext(cmd.Context())
-			if err != nil {
-				return err
-			}
-
 			var database aircraftdb.Database
 			if err := database.Load(settings.AircraftDatabaseFile(), io.Discard); err != nil {
 				return fmt.Errorf(
@@ -142,7 +121,7 @@ func aircraftSearchCommand() *cobra.Command {
 	return output
 }
 
-func aircraftCleanCommand() *cobra.Command {
+func aircraftCleanCommand(settings *config.Config) *cobra.Command {
 	var (
 		registration string
 		addr         model.ICAOAddr
@@ -153,12 +132,7 @@ func aircraftCleanCommand() *cobra.Command {
 		Short: "clean",
 		Long:  "clean the aircraft database",
 		RunE: func(cmd *cobra.Command, args []string) error {
-			settings, err := application.SettingsFromContext(cmd.Context())
-			if err != nil {
-				return err
-			}
-
-			_, err = os.Stat(settings.AircraftDatabaseFile())
+			_, err := os.Stat(settings.AircraftDatabaseFile())
 
 			switch {
 			case errors.Is(err, os.ErrNotExist):

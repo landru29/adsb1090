@@ -24,7 +24,16 @@ func main() {
 		os.Exit(0)
 	}()
 
-	if err := rootCommand().ExecuteContext(ctx); err != nil {
+	rootCmd, err := rootCommand()
+	if err != nil {
+		colored := color.New(color.FgRed).SprintFunc()
+
+		fmt.Fprintf(os.Stderr, colored("[ERROR] ", err.Error(), "\n")) //nolint: staticcheck
+
+		os.Exit(1)
+	}
+
+	if err := rootCmd.ExecuteContext(ctx); err != nil {
 		colored := color.New(color.FgRed).SprintFunc()
 
 		fmt.Fprintf(os.Stderr, colored("[ERROR] ", err.Error(), "\n")) //nolint: staticcheck
