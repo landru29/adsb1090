@@ -8,7 +8,9 @@ build-adsb1090.%: docker.% deb.%
 	    --mount type=bind,source=$(PWD)/$(subst build-adsb1090,deb,$@),target=/deb \
 		--volume $(PWD)/..:/application:ro \
 		$(image_name)-$(subst build-adsb1090.,,$@) \
-		build-adsb1090
+		build-adsb1090 && \
+		tar czf deb.arm64.tgz deb.arm64 && \
+		tar czf deb.amd64.tgz deb.amd64
 
 build-driver.%: docker.% deb.%
 	docker run \

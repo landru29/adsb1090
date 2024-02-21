@@ -1,0 +1,15 @@
+FROM --platform=linux/arm/v6 golang:1.21.7
+
+RUN apt update && apt install -y \
+    libusb-1.0-0-dev \
+    git \
+    build-essential \
+    cmake \
+    pkg-config \
+    devscripts \
+    debhelper
+
+COPY entrypoint.sh /entrypoint.sh
+
+ENTRYPOINT [ "/entrypoint.sh" ]
+

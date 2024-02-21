@@ -28,6 +28,12 @@ do
                 "aarch64" )
                     ARCH=arm64
                     ;;
+                "armv6l" )
+                    ARCH=armv6l
+                    ;;
+                "armv7l" )
+                    ARCH=armv7l
+                    ;;
             esac
 
             mkdir -p /adsb1090-${ARCH}/usr/local/bin
@@ -42,6 +48,8 @@ do
 
             dpkg-deb --build --root-owner-group /adsb1090-${ARCH}
             cp /adsb1090-${ARCH}.deb /deb/.
+
+            echo "Packaging success !"
             exit 0
            ;;
    esac
