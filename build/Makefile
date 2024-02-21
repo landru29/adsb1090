@@ -9,14 +9,14 @@ build-adsb1090.%: docker.% deb.%
 		--volume $(PWD)/..:/application:ro \
 		$(image_name)-$(subst build-adsb1090.,,$@) \
 		build-adsb1090 && \
-		tar czf deb.arm64.tgz deb.arm64 && \
-		tar czf deb.amd64.tgz deb.amd64
+		find . -type d -iname 'deb.*' -exec tar czf {}.tgz {} \;
 
 build-driver.%: docker.% deb.%
 	docker run \
 	    --mount type=bind,source=$(PWD)/$(subst build-driver,deb,$@),target=/deb \
 		$(image_name)-$(subst build-driver.,,$@) \
-		build-driver
+		build-driver && \
+		find . -type d -iname 'deb.*' -exec tar czf {}.tgz {} \;
 
 docker.%:
 	docker build -t $(image_name)-$(subst docker.,,$@) -f $(subst docker,Dockerfile,$@) .
