@@ -9,9 +9,9 @@ test:
 gen:
 	go generate ./...
 
-build-adsb1090: build-adsb1090.armv6l build-adsb1090.armv7l build-adsb1090.amd64 build-adsb1090.arm64
+build-adsb1090: build-adsb1090.armv6l build-adsb1090.amd64 build-adsb1090.arm64
 
-build-driver: build-driver.armv6l build-driver.armv7l build-driver.amd64 build-driver.arm64 
+build-driver: build-driver.armv6l build-driver.amd64 build-driver.arm64 
 
 build-driver.%:
 	$(MAKE) -C build $@
