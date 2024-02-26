@@ -7,6 +7,11 @@ import (
 
 type protocolType string
 
+const (
+	protocolTypeTCP protocolType = "tcp"
+	protocolTypeUDP protocolType = "udp"
+)
+
 type protocolDirection string
 
 const (
@@ -14,6 +19,8 @@ const (
 	protocolBind protocolDirection = "bind"
 
 	defaultProtocolFormat = "nmea"
+
+	defaultAddr = "0.0.0.0:30003"
 )
 
 // ProtocolConfig is the net protocol parameter.
@@ -78,7 +85,7 @@ func (p ProtocolConfig) IsValid() bool {
 }
 
 func parseData(str string) (string, string) {
-	addr := "0.0.0.0:30003"
+	addr := defaultAddr
 	format := defaultProtocolFormat
 
 	if str != "" {

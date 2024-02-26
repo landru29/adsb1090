@@ -66,17 +66,25 @@ func New(
 
 // Bind is the net binder.
 func (t *Transporter) Bind(ctx context.Context, pType protocolType, addr string) error {
+	if pType == protocolTypeTCP {
+		return t.bindTCP(ctx, addr)
+	}
+
+	return nil
+}
+
+func (t *Transporter) bindTCP(ctx context.Context, addr string) error {
 	splitter := strings.Split(addr, ":")
 	port := splitter[len(splitter)-1]
 
-	tcpServer, err := net.Listen(string(pType), fmt.Sprintf(":%s", port))
+	tcpServer, err := net.Listen(string(protocolTypeTCP), fmt.Sprintf(":%s", port))
 	if err != nil {
 		return err
 	}
 
-	log := t.log.With("type", string(pType), "port", port)
+	log := t.log.With("type", string(protocolTypeTCP), "port", port)
 
-	log.Info("net listening")
+	log.Info("TCP listening")
 
 	go func() {
 		for {

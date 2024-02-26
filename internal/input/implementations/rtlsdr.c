@@ -119,7 +119,7 @@ uint16_t* computeMagnitudes(unsigned char *byteBuffer, uint32_t byteBufferLength
 
 void rtlsdrProcessRaw(unsigned char *byteBuffer, uint32_t byteBufferLength, void *ctx) {
     unsigned char message[14];
-    uint32_t magnitudeCount;
+    uint32_t magnitudeCount = 0;
     context *currentCtx = (context*)ctx;
 
     if (_debug) {

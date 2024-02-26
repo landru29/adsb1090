@@ -5,10 +5,9 @@
 context *newContext(void* goContext) {
     context *output = (context*)malloc(sizeof(context));
     output->goContext = goContext;
-    output->remainingMagnitudeData = (uint16_t*)malloc(MAGNITUDE_LONG_MSG_SIZE * sizeof(uint16_t) + PREAMBULE_BIT_SIZE);
+    output->remainingMagnitudeData = (uint16_t*)malloc((MAGNITUDE_LONG_MSG_SIZE + PREAMBULE_BIT_SIZE) * sizeof(uint16_t));
     output->remainingMagnitudeLengthByte = 0;
 
-    printf("Allocating memory: %ld\n", MAGNITUDE_LONG_MSG_SIZE * sizeof(uint16_t) + PREAMBULE_BIT_SIZE);
-
+    // fprintf(stderr, "Allocating memory: %ld\n", (MAGNITUDE_LONG_MSG_SIZE + PREAMBULE_BIT_SIZE) * sizeof(uint16_t));
     return output;
 }

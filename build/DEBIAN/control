@@ -1,6 +1,6 @@
 Package: adsb1090
 Version: 1.0
-Architecture: amd64
+Architecture: xxxxx
 Maintainer: Cyrille Meichel <landru.ker@gmail.com>
 Description: Software to decode ADSB from RTL85 device.
 Depends: rtl-sdr (>= 2.0.1)

@@ -1,0 +1,17 @@
+FROM --platform=linux/armhf golang:1.21.7-bullseye
+
+ENV QEMU_CPU=arm1176
+
+RUN apt update && apt install -y \
+    libusb-1.0-0-dev \
+    git \
+    build-essential \
+    cmake \
+    pkg-config \
+    devscripts \
+    debhelper
+
+COPY entrypoint.sh /entrypoint.sh
+
+ENTRYPOINT [ "/entrypoint.sh" ]
+

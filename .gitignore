@@ -4,3 +4,5 @@ bin.*
 /aircraftDatabase-*.csv
 /legacy
 *.local.*
+/build/usr
+/*.deb
